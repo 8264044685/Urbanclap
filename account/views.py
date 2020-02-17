@@ -11,7 +11,7 @@ from rest_framework.views import APIView
 
 from account.models import *
 from account.models import UserProfile as UserprofileModel
-from account.serializers import UserProfileSerializer, CommentSerializer, ServicesProviderSerializer, \
+from account.serializers import UserProfileSerializer, CommentSerializer, \
     ServicesSerializer, ServiceRequestSerializer
 
 
@@ -90,10 +90,7 @@ class CommentModelViewSet(viewsets.GenericViewSet, mixins.ListModelMixin, mixins
     queryset = Comment.objects.all()
 
 
-class ServicesProviderModelViewSet(viewsets.GenericViewSet, mixins.ListModelMixin, mixins.RetrieveModelMixin,
-                                   mixins.CreateModelMixin, mixins.DestroyModelMixin, mixins.UpdateModelMixin):
-    serializer_class = ServicesProviderSerializer
-    queryset = ServicesProvider.objects.all()
+
 
 
 class ServicesSerializerModelViewSet(viewsets.GenericViewSet, mixins.ListModelMixin, mixins.RetrieveModelMixin,

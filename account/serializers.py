@@ -1,6 +1,6 @@
 from rest_framework import serializers
 
-from account.models import UserProfile, Comment, ServicesProvider, Services, ServiceRequest
+from account.models import UserProfile, Comment, Services, ServiceRequest
 
 
 class UserProfileSerializer(serializers.ModelSerializer):
@@ -40,19 +40,15 @@ class CommentSerializer(serializers.ModelSerializer):
         fields = ['id','user','servicerequest', 'message','status']
 
 
-class ServicesProviderSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = ServicesProvider
-        fields = ['id', 'full_name', "email", "mobile_number"]
 
 
 class ServicesSerializer(serializers.ModelSerializer):
     class Meta:
         model = Services
-        fields = ['id', 'servicesprovider', 'service_name', 'service_description', 'service_price']
+        fields = ['id', 'service_name', 'service_description', 'service_price']
 
 
 class ServiceRequestSerializer(serializers.ModelSerializer):
     class Meta:
         model = ServiceRequest
-        fields = ['id','servicesprovider','customer_id','service','status']
+        fields = ['id','customer','service','status']

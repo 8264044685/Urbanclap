@@ -1,5 +1,5 @@
 from django.contrib import admin
-from account.models import UserProfile,Services,ServicesProvider,Comment,ServiceRequest
+from account.models import UserProfile,Services,Comment,ServiceRequest
 # from account.forms import UserProfileForm
 
 
@@ -11,7 +11,6 @@ class UserProfileAdmin(admin.ModelAdmin):
     # class Meta:
     #     model = UserProfile
 admin.site.register(UserProfile, UserProfileAdmin)
-admin.site.register(ServicesProvider)
 admin.site.register(Services)
 admin.site.register(ServiceRequest)
 admin.site.register(Comment)

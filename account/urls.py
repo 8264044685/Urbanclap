@@ -8,8 +8,6 @@ router = DefaultRouter()
 
 router.register('profileviewset', views.UserProfileViewSet)
 router.register('CommentModelViewSet', views.CommentModelViewSet, basename='CommentModelViewSet')
-router.register('ServicesProviderModelViewSet', views.ServicesProviderModelViewSet,
-                basename='ServicesProviderModelViewSet')
 router.register('ServicesSerializerModelViewSet', views.ServicesSerializerModelViewSet,
                 basename='ServicesSerializerModelViewSet')
 router.register('ServiceRequestSerializerModelViewSet', views.ServiceRequestSerializerModelViewSet,

@@ -82,17 +82,9 @@ def create_auth_token(sender, instance=None, created=False, **kwargs):
         Token.objects.create(user=instance)
 
 
-class ServicesProvider(models.Model):
-    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
-    full_name = models.CharField(max_length=50,blank=True)
-    email = models.EmailField(max_length=40, blank=True)
-    mobile_number = models.BigIntegerField()
-
-    def __str__(self):
-        return self.full_name
 
 class Services(models.Model):
-    servicesprovider = models.ForeignKey(ServicesProvider, on_delete=models.CASCADE)
+    servicesprovider = models.ForeignKey(UserProfile, on_delete=models.CASCADE, limit_choices_to={'user_type': 'Service_Provider'})
     service_name = models.CharField(max_length=100, blank=True)
     service_description = models.TextField(max_length=255, blank=True)
     service_price = models.CharField(max_length=50, blank=True)
@@ -103,14 +95,14 @@ class Services(models.Model):
         return self.service_name
 
 class ServiceRequest(models.Model):
-    servicesprovider = models.ForeignKey(ServicesProvider, on_delete=models.CASCADE)
-    customer_id = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
+
+    customer = models.ForeignKey(UserProfile, on_delete=models.CASCADE, limit_choices_to={'user_type': 'Customer'})
     service = models.ForeignKey(Services,on_delete=models.CASCADE)
     ststus = (
         ('Pending', 'PENDING'),
-        ('Accept', 'ACCEPT'),
-        ('Reject', 'REJECT'),
-        ('Complete', 'COMPLETE'),
+        ('Accepted', 'ACCEPTED'),
+        ('Rejected', 'REJECTED'),
+        ('Completed', 'COMPLETED'),
     )
     status = models.CharField(max_length=15, choices=ststus, default='Pending', )
     created_at = models.DateTimeField(auto_now_add=True)
@@ -121,7 +113,7 @@ class ServiceRequest(models.Model):
         return self.service.service_name
 
 class Comment(models.Model):
-    servicerequest = models.ForeignKey(ServiceRequest, on_delete=models.CASCADE)
+    servicerequest = models.ForeignKey(ServiceRequest, on_delete=models.CASCADE,limit_choices_to={'status__in': ['Accepted', 'Completed']})
     user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
     message = models.TextField(blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
