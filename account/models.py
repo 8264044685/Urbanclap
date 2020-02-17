@@ -46,11 +46,10 @@ class UserProfile(AbstractBaseUser):
     email = models.EmailField(max_length=255, unique=True)
     username = models.CharField(max_length=255)
     user_type = (
-        ('as_a', 'AS A'),
         ('Customer', 'CUSTOMER'),
         ('Service_Provider', 'SERVICES PROVIDER'),
     )
-    user_type = models.CharField(max_length=15, choices=user_type, default='as_a', )
+    user_type = models.CharField(max_length=15, choices=user_type, default='Customer', )
 
     is_admin = models.BooleanField(default=False)
     is_active = models.BooleanField(default=True)

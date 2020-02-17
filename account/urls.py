@@ -21,17 +21,23 @@ servicerequestrouter = DefaultRouter()
 servicerequestrouter.register('ServiceRequestViewSet',views.ServiceRequestViewSet,basename='ServiceRequestViewSet')
 servicerequestrouter.register('ServiceRequestViewSet/<int:pk>',views.ServiceRequestViewSet,basename='ServiceRequestViewSet')
 
+
+servicesrouter = DefaultRouter()
+servicesrouter.register('ServicesViewSet',views.ServicesViewSet,basename='ServicesViewSet')
+servicesrouter.register('ServicesViewSet/<int:pk>',views.ServicesViewSet,basename='ServicesViewSet')
+
 urlpatterns = [
     path('', include(commentrouter.urls)),
     path('', include(servicerequestrouter.urls)),
+    path('', include(servicesrouter.urls)),
 
-    path('UserProfileView', views.UserProfileAPIView.as_view()),
+    path('UserProfileView/<int:id>', views.UserProfileAPIView.as_view()),
     path('', include(router.urls)),
     path('register', views.registration_view, name='register'),
     path('login', obtain_auth_token, name='login'),
     path('loginview', views.UserLoginAPIView.as_view()),
     path('userprofiledetailview/<int:id>', views.UserProfileAPIView.as_view()),
+    path('change_password', views.change_password,name='change_password'),
     # path('show_request', views.show_request,name='show_request'),
-
 
 ]

@@ -52,3 +52,8 @@ class ServiceRequestSerializer(serializers.ModelSerializer):
     class Meta:
         model = ServiceRequest
         fields = ['id','customer','service','status']
+
+class PasswordRestSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = UserProfile
+        fields = ['password']
