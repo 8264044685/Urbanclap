@@ -32,14 +32,11 @@ class UserProfileSerializer(serializers.ModelSerializer):
         account.save()
         return account
 
+
 class CommentSerializer(serializers.ModelSerializer):
-
-
     class Meta:
         model = Comment
-        fields = ['id','user','servicerequest', 'message','status']
-
-
+        fields = ['id', 'user', 'servicerequest', 'message']
 
 
 class ServicesSerializer(serializers.ModelSerializer):
@@ -51,7 +48,20 @@ class ServicesSerializer(serializers.ModelSerializer):
 class ServiceRequestSerializer(serializers.ModelSerializer):
     class Meta:
         model = ServiceRequest
-        fields = ['id','customer','service','status']
+        fields = ['service']
+
+        def create(self, validated_data):
+            req = ServiceRequest(
+                service=validated_data.get('service')
+            )
+            return req
+
+
+class ServiceRequestDetailSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = ServiceRequest
+        fields = ['id', 'customer', 'service', 'status']
+
 
 class PasswordRestSerializer(serializers.ModelSerializer):
     class Meta:

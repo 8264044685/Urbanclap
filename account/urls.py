@@ -14,17 +14,17 @@ router.register('ServiceRequestSerializerModelViewSet', views.ServiceRequestSeri
                 basename='ServiceRequestSerializerModelViewSet')
 
 commentrouter = DefaultRouter()
-commentrouter.register('CommentViewSet',views.CommentViewSet,basename='CommentViewSet')
-commentrouter.register('CommentViewSet/<int:pk>',views.CommentViewSet,basename='CommentViewSet')
+commentrouter.register('CommentViewSet', views.CommentViewSet, basename='CommentViewSet')
+commentrouter.register('CommentViewSet/<int:pk>', views.CommentViewSet, basename='CommentViewSet')
 
 servicerequestrouter = DefaultRouter()
-servicerequestrouter.register('ServiceRequestViewSet',views.ServiceRequestViewSet,basename='ServiceRequestViewSet')
-servicerequestrouter.register('ServiceRequestViewSet/<int:pk>',views.ServiceRequestViewSet,basename='ServiceRequestViewSet')
-
+servicerequestrouter.register('ServiceRequestViewSet', views.ServiceRequestViewSet, basename='ServiceRequestViewSet')
+servicerequestrouter.register('ServiceRequestViewSet/<int:pk>', views.ServiceRequestViewSet,
+                              basename='ServiceRequestViewSet')
 
 servicesrouter = DefaultRouter()
-servicesrouter.register('ServicesViewSet',views.ServicesViewSet,basename='ServicesViewSet')
-servicesrouter.register('ServicesViewSet/<int:pk>',views.ServicesViewSet,basename='ServicesViewSet')
+servicesrouter.register('ServicesViewSet', views.ServicesViewSet, basename='ServicesViewSet')
+servicesrouter.register('ServicesViewSet/<int:pk>', views.ServicesViewSet, basename='ServicesViewSet')
 
 urlpatterns = [
     path('', include(commentrouter.urls)),
@@ -37,7 +37,7 @@ urlpatterns = [
     path('login', obtain_auth_token, name='login'),
     path('loginview', views.UserLoginAPIView.as_view()),
     path('userprofiledetailview/<int:id>', views.UserProfileAPIView.as_view()),
-    path('change_password', views.change_password,name='change_password'),
+    path('change_password', views.change_password, name='change_password'),
     # path('show_request', views.show_request,name='show_request'),
 
 ]

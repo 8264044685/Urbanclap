@@ -6,15 +6,16 @@ from rest_framework import status
 from rest_framework import viewsets
 from rest_framework.authtoken.views import ObtainAuthToken
 from rest_framework.decorators import api_view, permission_classes
-from rest_framework.permissions import IsAuthenticated, AllowAny
+from rest_framework.permissions import AllowAny
 from rest_framework.response import Response
 from rest_framework.settings import api_settings
 from rest_framework.views import APIView
-from account.permissions import SignUpPermission
+
 from account.models import *
 from account.models import UserProfile as UserprofileModel
+from account.permissions import SignUpPermission
 from account.serializers import UserProfileSerializer, CommentSerializer, \
-    ServicesSerializer, ServiceRequestSerializer, PasswordRestSerializer
+    ServicesSerializer, ServiceRequestSerializer, PasswordRestSerializer, ServiceRequestDetailSerializer
 
 
 # Create your views here.
@@ -144,22 +145,38 @@ class CommentViewSet(viewsets.ViewSet):
 class ServiceRequestViewSet(viewsets.ViewSet):
 
     def list(self, request):
+
         servicerequest = ServiceRequest.objects.all()
         serializer = ServiceRequestSerializer(servicerequest, many=True)
         return Response(serializer.data)
 
     def create(self, request):
-        serializer = ServiceRequest(data=request.data)
+
+        if request.user.user_type != 'Customer':
+            return Response(
+                {'message': 'You are not eligible to send a request'},
+                status=status.HTTP_451_UNAVAILABLE_FOR_LEGAL_REASONS
+            )
+        serializer = ServiceRequestSerializer(data=request.data)
+
         if serializer.is_valid():
-            serializer.save()
+            req = serializer.create(serializer.validated_data)
+            req.customer = request.user
+            req.ststus = 'Pending'
+            req.save()
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.error, status=status.HTTP_400_BAD_REQUEST)
 
     def retrieve(self, request, pk=None):
-        queryset = ServiceRequest.objects.all()
-        service = get_object_or_404(queryset, pk=pk)
-        serializer = ServiceRequestSerializer(service)
-        return Response(serializer.data)
+        try:
+            servicer = ServiceRequest.objects.get(pk=pk)
+        except ServiceRequest.DoesNOtExist:
+            return Response({'message': 'service request not found'}, status=status.HTTP_404_NOT_FOUND)
+
+        if servicer.customer == request.user or servicer.service.provider == request.user:
+            serializer = ServiceRequestDetailSerializer(servicer)
+            return Response({'message': 'data is '}, serializer.data)
+        return Response(status=status.HTTP_404_NOT_FOUND)
 
     def update(self, request, pk=None):
 
@@ -172,9 +189,20 @@ class ServiceRequestViewSet(viewsets.ViewSet):
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
     def destroy(self, request, pk=None):
-        servicerequest = ServiceRequest.objects.get(pk=pk)
-        servicerequest.delete()
-        return Response(status=status.HTTP_204_NO_CONTENT)
+
+        try:
+            servicerequest = ServiceRequest.objects.get(pk=pk)
+        except ServiceRequest.DoesNotExist:
+            return Response({'message': 'Service request does not exist'}, status=status.HTTP_404_NOT_FOUND)
+
+        if servicerequest.customer != request.user:
+            return Response({'message': 'You are not allow to delete this request'},
+                            status=status.HTTP_401_UNAUTHORIZED)
+
+        if servicerequest.status in ['Rejected', 'Completed']:
+            servicerequest.delete()
+            return Response({'message': 'service deleted'}, status=status.HTTP_200_OK)
+        return Response(status=status.HTTP_400_BAD_REQUEST)
 
 
 class ServicesViewSet(viewsets.ViewSet):
@@ -216,6 +244,7 @@ class ServicesViewSet(viewsets.ViewSet):
 @csrf_exempt
 @permission_classes([AllowAny, ])
 def change_password(request):
+    """Method for Change password"""
     if request.method == 'PUT':
         hash = UserProfile.objects.get(email=request.user).password
         u = UserProfile.objects.get(email=request.user)
@@ -226,4 +255,4 @@ def change_password(request):
             if serializer.is_valid():
                 serializer.save()
                 return Response(serializer.data, status=200)
-        return Response("HI",status=status.HTTP_400_BAD_REQUEST)
+        return Response("HI", status=status.HTTP_400_BAD_REQUEST)
